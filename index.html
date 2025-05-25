@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D'Sauce - Finger Lickin' Good Food</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f8f8f8;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1559847844-5315695dadae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1798&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .floating-button {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .nav-item.active {
+            border-bottom: 3px solid #e53e3e;
+        }
+        
+        /* Auto-scrolling food board */
+        .food-board {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            background-color: #fef2f2;
+            padding: 20px 0;
+            border-top: 3px solid #e53e3e;
+            border-bottom: 3px solid #e53e3e;
+        }
+        
+        .food-board-container {
+            display: inline-block;
+            animation: scroll 30s linear infinite;
+        }
+        
+        .food-item {
+            display: inline-block;
+            margin: 0 30px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .food-item img {
+            height: 80px;
+            width: 80px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 3px solid #e53e3e;
+        }
+        
+        .food-item p {
+            margin-top: 8px;
+            font-weight: bold;
+            color: #e53e3e;
+            font-size: 14px;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        
+        /* WhatsApp button style */
+        .whatsapp-btn {
+            background-color: #25D366;
+            color: white;
+        }
+        
+        .whatsapp-btn:hover {
+            background-color: #128C7E;
+        }
+
+       
+
+        .my-logo{
+            width: 150px;
+            border-radius: 75px;
+            border-width: 1px;
+            border-style: solid;
+            border-color: rgba(116, 8, 8, 0.918);
+            margin-bottom: 0;
+        }
+
+        .logo-name{
+            justify-content: center;
+            margin-left: 30px;
+            font-size: 25px;
+            font-weight: bold;
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <!-- Header -->
+    <header class="bg-red-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="items-center">
+                <img class="my-logo" src="WhatsApp Image 2025-05-24 at 14.27.48_66ebc907.jpg">
+                <h1 class="logo-name">D'Sauce</h1>
+            </div>
+            
+            <nav class="hidden md:flex space-x-8">
+                <a href="#" class="nav-item active" onclick="showPage('home')">Home</a>
+                <a href="#" class="nav-item" onclick="showPage('menu')">Menu</a>
+                <a href="#" class="nav-item" onclick="showPage('about')">About Us</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <a href="https://wa.me/2348115094773?text=I%20want%20to%20place%20an%20order%20from%20D'Sauce" class="whatsapp-btn bg-white text-green-600 px-4 py-2 rounded-full font-bold hover:bg-gray-100 transition">
+                    <i class="fab fa-whatsapp mr-2"></i> Order Now
+                </a>
+                <button class="md:hidden text-white text-2xl" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden bg-red-700 hidden">
+            <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+                <a href="#" class="block py-2 text-white" onclick="showPage('home')">Home</a>
+                <a href="#" class="block py-2 text-white" onclick="showPage('menu')">Menu</a>
+                <a href="#" class="block py-2 text-white" onclick="showPage('about')">About Us</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Auto-scrolling Food Board -->
+    <div class="food-board">
+        <div class="food-board-container">
+            <div class="food-item">
+                <img src="https://images.unsplash.com/photo-1562967914-01d3d60e2c1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Spaghetti and Chicken">
+                <p>Spaghetti & Chicken</p>
+            </div>
+            <div class="food-item">
+                <img src="https://images.unsplash.com/photo-1608897013030-2e9a9ee5adfe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Spaghetti and Turkey">
+                <p>Spaghetti & Turkey</p>
+            </div>
+            <div class="food-item">
+                <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Sharwarma">
+                <p>Chicken Sharwarma</p>
+            </div>
+            <div class="food-item">
+                <img src="https://images.unsplash.com/photo-1630450202872-e4ae68b15f3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Beef Sharwarma">
+                <p>Beef Sharwarma</p>
+            </div>
+            <div class="food-item">
+                <img src="https://images.unsplash.com/photo-1625937323775-f6a485f9a46f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Small Chops">
+                <p>Small Chops Platter</p>
+            </div>
+            <div class="food-item">
+                <img src="https://images.unsplash.com/photo-1626074353765-517c6815f389?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Chicken Wings">
+                <p>Spicy Chicken Wings</p>
+            </div>
+            <div class="food-item">
+                <img src="https://images.unsplash.com/photo-1559847844-5315695dadae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1798&q=80" alt="Fried Rice">
+                <p>Fried Rice & Chicken</p>
+            </div>
+            <div class="food-item">
+                <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Pepper Soup">
+                <p>Spicy Goat Pepper Soup</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Page -->
+    <div id="home" class="page active">
+        <!-- Hero Section -->
+        <section class="hero-section text-white py-20 md:py-32">
+            <div class="container mx-auto px-4 text-center">
+                <h1 class="text-4xl md:text-6xl font-bold mb-6">Finger Lickin' Good Food</h1>
+                <p class="text-xl md:text-2xl mb-8">Saucy, Spicy & Delicious</p>
+                <a href="https://wa.me/2348115094773?text=I%20want%20to%20place%20an%20order%20from%20D'Sauce" class="whatsapp-btn inline-block bg-red-600 hover:bg-red-700 text-white px-8 py-3 rounded-full text-lg font-bold transition">
+                    Order Now <i class="fas fa-chevron-right ml-2"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Special Offers -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Today's Special Offers</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Offer 1 -->
+                    <div class="bg-red-50 rounded-lg overflow-hidden shadow-md">
+                        <img src="https://images.unsplash.com/photo-1562967914-01d3d60e2c1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Spaghetti and Chicken" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Spaghetti & Chicken Combo</h3>
+                            <p class="text-gray-600 mb-4">Our signature spaghetti with juicy fried chicken pieces.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-red-600 font-bold text-lg">₦3,500</span>
+                                <span class="text-sm bg-red-600 text-white px-2 py-1 rounded">20% OFF</span>
+                            </div>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Spaghetti%20%26%20Chicken%20Combo%20from%20D'Sauce" class="whatsapp-btn block text-center mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Offer 2 -->
+                    <div class="bg-red-50 rounded-lg overflow-hidden shadow-md">
+                        <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Sharwarma" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Double Sharwarma</h3>
+                            <p class="text-gray-600 mb-4">Double portion of our spicy chicken sharwarma with special sauce.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-red-600 font-bold text-lg">₦2,800</span>
+                                <span class="text-sm bg-red-600 text-white px-2 py-1 rounded">15% OFF</span>
+                            </div>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Double%20Sharwarma%20from%20D'Sauce" class="whatsapp-btn block text-center mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Offer 3 -->
+                    <div class="bg-red-50 rounded-lg overflow-hidden shadow-md">
+                        <img src="https://images.unsplash.com/photo-1625937323775-f6a485f9a46f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Small chops" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-2">Small Chips Platter</h3>
+                            <p class="text-gray-600 mb-4">Assorted small chops with chicken, spring rolls and samosas.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-red-600 font-bold text-lg">₦4,200</span>
+                                <span class="text-sm bg-red-600 text-white px-2 py-1 rounded">25% OFF</span>
+                            </div>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Small%20Chips%20Platter%20from%20D'Sauce" class="whatsapp-btn block text-center mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section class="py-16 bg-red-600 text-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">Why Choose D'Sauce?</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="bg-white text-red-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-clock text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Fast Service</h3>
+                        <p>We deliver your food hot and fresh in record time.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-white text-red-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-pepper-hot text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Secret Sauces</h3>
+                        <p>Our special blend of spices and sauces makes all the difference.</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="bg-white text-red-600 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-award text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Premium Quality</h3>
+                        <p>We use only the freshest ingredients for all our dishes.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">What Our Customers Say</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="flex items-center mb-4">
+                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Customer" class="w-12 h-12 rounded-full mr-4">
+                            <div>
+                                <h4 class="font-bold">Amina Yusuf</h4>
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"The spaghetti and chicken combo is my favorite! The sauce is so rich and flavorful."</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="flex items-center mb-4">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Customer" class="w-12 h-12 rounded-full mr-4">
+                            <div>
+                                <h4 class="font-bold">Emeka Okafor</h4>
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"Best sharwarma in town! I order at least twice a week. The spicy sauce is amazing."</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <div class="flex items-center mb-4">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Customer" class="w-12 h-12 rounded-full mr-4">
+                            <div>
+                                <h4 class="font-bold">Chioma Adeleke</h4>
+                                <div class="flex text-yellow-400">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">"The small chops platter is perfect for parties. Always fresh and delicious!"</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="py-16 bg-red-50">
+            <div class="container mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-6 text-gray-800">Ready to Taste  D'Sauce Difference?</h2>
+                <p class="text-xl mb-8 text-gray-600">Contact us directly on WhatsApp to place your order</p>
+                <a href="https://wa.me/2348115094773?text=I%20want%20to%20place%20an%20order%20from%20D'Sauce" class="whatsapp-btn inline-block bg-green-600 hover:bg-green-700 text-white px-8 py-3 rounded-full text-lg font-bold transition">
+                    <i class="fab fa-whatsapp mr-2"></i> Chat on WhatsApp
+                </a>
+            </div>
+        </section>
+    </div>
+
+    <!-- Menu Page -->
+    <div id="menu" class="page">
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Our Delicious Menu</h2>
+                
+                <div class="flex flex-wrap justify-center mb-8">
+                    <button class="px-4 py-2 mx-2 bg-red-600 text-white rounded-full font-bold" onclick="filterMenu('all')">All</button>
+                    <button class="px-4 py-2 mx-2 bg-gray-200 rounded-full" onclick="filterMenu('spaghetti')">Spaghetti</button>
+                    <button class="px-4 py-2 mx-2 bg-gray-200 rounded-full" onclick="filterMenu('chicken')">Chicken</button>
+                    <button class="px-4 py-2 mx-2 bg-gray-200 rounded-full" onclick="filterMenu('sharwarma')">Sharwarma</button>
+                    <button class="px-4 py-2 mx-2 bg-gray-200 rounded-full" onclick="filterMenu('smallchops')">Small Chops</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="menuContainer">
+                    <!-- Spaghetti Items -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="spaghetti">
+                        <img src="https://images.unsplash.com/photo-1562967914-01d3d60e2c1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Spaghetti and Chicken" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-800">Spaghetti & Chicken</h3>
+                                <span class="text-red-600 font-bold">₦3,500</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Our signature spaghetti with juicy fried chicken pieces and special sauce.</p>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Spaghetti%20%26%20Chicken%20from%20D'Sauce" class="whatsapp-btn block text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="spaghetti">
+                        <img src="https://images.unsplash.com/photo-1608897013030-2e9a9ee5adfe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Spaghetti and Turkey" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-800">Spaghetti & Turkey</h3>
+                                <span class="text-red-600 font-bold">₦4,200</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Premium spaghetti with grilled turkey chunks and our special sauce blend.</p>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Spaghetti%20%26%20Turkey%20from%20D'Sauce" class="whatsapp-btn block text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Sharwarma Items -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="sharwarma">
+                        <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Chicken Sharwarma" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-800">Chicken Sharwarma</h3>
+                                <span class="text-red-600 font-bold">₦2,500</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Juicy chicken strips with fresh vegetables and our special spicy sauce.</p>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Chicken%20Sharwarma%20from%20D'Sauce" class="whatsapp-btn block text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="sharwarma">
+                        <img src="https://images.unsplash.com/photo-1630450202872-e4ae68b15f3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Beef Sharwarma" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-800">Beef Sharwarma</h3>
+                                <span class="text-red-600 font-bold">₦2,800</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Tender beef strips with fresh vegetables and garlic sauce.</p>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Beef%20Sharwarma%20from%20D'Sauce" class="whatsapp-btn block text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Small Chops -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="smallchops">
+                        <img src="https://images.unsplash.com/photo-1625937323775-f6a485f9a46f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Small Chops Platter" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-800">Small Chops Platter</h3>
+                                <span class="text-red-600 font-bold">₦4,200</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Assorted small chops including spring rolls, samosas, chicken wings and more.</p>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Small%20Chops%20Platter%20from%20D'Sauce" class="whatsapp-btn block text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="smallchops">
+                        <img src="https://images.unsplash.com/photo-1626074353765-517c6815f389?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Chicken Wings" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-800">Spicy Chicken Wings</h3>
+                                <span class="text-red-600 font-bold">₦3,800</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Crispy chicken wings tossed in our signature spicy sauce.</p>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Spicy%20Chicken%20Wings%20from%20D'Sauce" class="whatsapp-btn block text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Other Items -->
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="chicken">
+                        <img src="https://images.unsplash.com/photo-1559847844-5315695dadae?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1798&q=80" alt="Fried Rice" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-800">Fried Rice & Chicken</h3>
+                                <span class="text-red-600 font-bold">₦3,800</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Special fried rice with vegetables and juicy fried chicken.</p>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Fried%20Rice%20%26%20Chicken%20from%20D'Sauce" class="whatsapp-btn block text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item bg-white rounded-lg overflow-hidden shadow-md transition duration-300" data-category="spaghetti">
+                        <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Pepper Soup" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-xl font-bold text-gray-800">Spicy Goat Pepper Soup</h3>
+                                <span class="text-red-600 font-bold">₦3,200</span>
+                            </div>
+                            <p class="text-gray-600 mb-4">Hot and spicy goat meat pepper soup with assorted spices.</p>
+                            <a href="https://wa.me/2348115094773?text=I%20want%20to%20order%20Spicy%20Goat%20Pepper%20Soup%20from%20D'Sauce" class="whatsapp-btn block text-center bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                                <i class="fab fa-whatsapp mr-2"></i> Order Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- About Page -->
+    <div id="about" class="page">
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">About D'Sauce</h2>
+                
+                <div class="flex flex-col md:flex-row items-center mb-16">
+                    <div class="md:w-1/2 mb-8 md:mb-0 md:pr-8">
+                        <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80" alt="Our Restaurant" class="w-full rounded-lg shadow-lg">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800">Our Story</h3>
+                        <p class="text-gray-600 mb-4">Founded in 2015, D'Sauce began as a small food stall with a big dream - to serve the most flavorful, saucy and spicy fast food in Nigeria.</p>
+                        <p class="text-gray-600 mb-4">What started as a passion project has now grown into one of the most beloved fast food brands in the region, known for our signature sauces and perfectly spiced dishes.</p>
+                        <p class="text-gray-600">Every dish at D'Sauce is prepared with care, using only the freshest ingredients and our secret blend of spices that keep customers coming back for more.</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-col md:flex-row-reverse items-center mb-16">
+                    <div class="md:w-1/2 mb-8 md:mb-0 md:pl-8">
+                        <img src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=870&q=80" alt="Our Team" class="w-full rounded-lg shadow-lg">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h3 class="text-2xl font-bold mb-4 text-gray-800">Our Team</h3>
+                        <p class="text-gray-600 mb-4">At the heart of D'Sauce is our dedicated team of chefs and staff who work tirelessly to ensure every customer enjoys an exceptional dining experience.</p>
+                        <p class="text-gray-600">Our chefs undergo rigorous training to master the art of preparing our signature dishes while maintaining the highest standards of hygiene and food safety.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-red-50 p-8 rounded-lg">
+                    <h3 class="text-2xl font-bold mb-6 text-center text-gray-800">Our Mission & Values</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="text-center">
+                            <div class="bg-red-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-heart text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold mb-2 text-gray-800">Passion</h4>
+                            <p class="text-gray-600">We're passionate about creating delicious food that brings people together.</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="bg-red-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-star text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold mb-2 text-gray-800">Quality</h4>
+                            <p class="text-gray-600">We never compromise on quality, from ingredients to preparation.</p>
+                        </div>
+                        
+                        <div class="text-center">
+                            <div class="bg-red-600 text-white rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-users text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold mb-2 text-gray-800">Community</h4>
+                            <p class="text-gray-600">We're proud to be part of the communities we serve.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Locations -->
+        <section class="py-16 bg-red-600 text-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">Our Locations</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white text-gray-800 p-6 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt text-red-600 mr-2"></i> Ikeja Branch
+                        </h3>
+                        <p class="mb-2"><i class="fas fa-phone-alt text-red-600 mr-2"></i> 0803 456 7890</p>
+                        <p class="mb-2"><i class="fas fa-clock text-red-600 mr-2"></i> Mon-Sun: 8am - 10pm</p>
+                        <p><i class="fas fa-map-pin text-red-600 mr-2"></i> 123 Allen Avenue, Ikeja, Lagos</p>
+                        <a href="https://wa.me/2348115094773?text=I%20want%20to%20visit%20your%20Ikeja%20branch%20of%20D'Sauce" class="whatsapp-btn block text-center mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                            <i class="fab fa-whatsapp mr-2"></i> Chat for Directions
+                        </a>
+                    </div>
+                    
+                    <div class="bg-white text-gray-800 p-6 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt text-red-600 mr-2"></i> Lekki Branch
+                        </h3>
+                        <p class="mb-2"><i class="fas fa-phone-alt text-red-600 mr-2"></i> 0803 123 4567</p>
+                        <p class="mb-2"><i class="fas fa-clock text-red-600 mr-2"></i> Mon-Sun: 8am - 11pm</p>
+                        <p><i class="fas fa-map-pin text-red-600 mr-2"></i> 45 Admiralty Way, Lekki Phase 1, Lagos</p>
+                        <a href="https://wa.me/2348115094773?text=I%20want%20to%20visit%20your%20Lekki%20branch%20of%20D'Sauce" class="whatsapp-btn block text-center mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                            <i class="fab fa-whatsapp mr-2"></i> Chat for Directions
+                        </a>
+                    </div>
+                    
+                    <div class="bg-white text-gray-800 p-6 rounded-lg shadow-lg">
+                        <h3 class="text-xl font-bold mb-4 flex items-center">
+                            <i class="fas fa-map-marker-alt text-red-600 mr-2"></i> Abuja Branch
+                        </h3>
+                        <p class="mb-2"><i class="fas fa-phone-alt text-red-600 mr-2"></i> 0809 876 5432</p>
+                        <p class="mb-2"><i class="fas fa-clock text-red-600 mr-2"></i> Mon-Sun: 9am - 10pm</p>
+                        <p><i class="fas fa-map-pin text-red-600 mr-2"></i> 22 Aminu Kano Crescent, Wuse 2, Abuja</p>
+                        <a href="https://wa.me/2348115094773?text=I%20want%20to%20visit%20your%20Abuja%20branch%20of%20D'Sauce" class="whatsapp-btn block text-center mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-full font-bold transition">
+                            <i class="fab fa-whatsapp mr-2"></i> Chat for Directions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Contact Form -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-4 max-w-3xl">
+                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">Contact Us</h2>
+                
+                <form class="bg-red-50 p-8 rounded-lg shadow-md">
+                    <div class="mb-6">
+                        <label for="name" class="block text-gray-700 font-bold mb-2">Your Name</label>
+                        <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="email" class="block text-gray-700 font-bold mb-2">Email Address</label>
+                        <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="subject" class="block text-gray-700 font-bold mb-2">Subject</label>
+                        <input type="text" id="subject" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600">
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="message" class="block text-gray-700 font-bold mb-2">Message</label>
+                        <textarea id="message" rows="5" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-600"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold w-full transition">
+                        Send Message <i class="fas fa-paper-plane ml-2"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <div class="fixed bottom-6 right-6 z-50">
+        <a href="https://wa.me/2348115094773?text=I%20want%20to%20place%20an%20order%20from%20D'Sauce" class="floating-button whatsapp-btn bg-green-600 hover:bg-green-700 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-lg transition">
+            <i class="fab fa-whatsapp text-2xl"></i>
+        </a>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">D'Sauce</h3>
+                    <p class="mb-4">Serving saucy, spicy and delicious fast food since 2015.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-white hover:text-red-400"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-white hover:text-red-400"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white hover:text-red-400"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-white hover:text-red-400"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="hover:text-red-400" onclick="showPage('home')">Home</a></li>
+                        <li><a href="#" class="hover:text-red-400" onclick="showPage('menu')">Menu</a></li>
+                        <li><a href="#" class="hover:text-red-400" onclick="showPage('about')">About Us</a></li>
+                        <li><a href="#" class="hover:text-red-400">Locations</a></li>
+                        <li><a href="#" class="hover:text-red-400">Careers</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Contact Info</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center"><i class="fas fa-map-marker-alt mr-2 text-red-400"></i> 123 Allen Ave, Ikeja, Lagos</li>
+                        <li class="flex items-center"><i class="fas fa-phone-alt mr-2 text-red-400"></i> 09075350850</li>
+                        <li class="flex items-center"><i class="fas fa-envelope mr-2 text-red-400"></i> info@dsauce.com</li>
+                        <li class="flex items-center"><i class="fab fa-whatsapp mr-2 text-red-400"></i> 09046585572</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4">Newsletter</h4>
+                    <p class="mb-4">Subscribe to get updates on new menu items and special offers.</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg w-full focus:outline-none text-gray-800">
+                        <button class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-r-lg">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center">
+                <p>&copy; 2023 D'Sauce. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Show page function
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Set active nav item
+            if (pageId === 'home') {
+                document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+            } else if (pageId === 'menu') {
+                document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+            } else if (pageId === 'about') {
+                document.querySelector('.nav-item:nth-child(3)').classList.add('active');
+            }
+            
+            // Close mobile menu if open
+            document.getElementById('mobileMenu').classList.add('hidden');
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+        
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        }
+        
+        // Filter menu items
+        function filterMenu(category) {
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            menuItems.forEach(item => {
+                if (category === 'all' || item.dataset.category === category) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
+            // Update active filter button
+            const filterButtons = document.querySelectorAll('#menu button');
+            filterButtons.forEach(button => {
+                if (button.textContent.trim().toLowerCase().includes(category) || 
+                    (category === 'all' && button.textContent.trim() === 'All')) {
+                    button.classList.remove('bg-gray-200');
+                    button.classList.add('bg-red-600', 'text-white');
+                } else {
+                    button.classList.remove('bg-red-600', 'text-white');
+                    button.classList.add('bg-gray-200');
+                }
+            });
+        }
+        
+        // Initialize page on load
+        document.addEventListener('DOMContentLoaded', function() {
+            showPage('home');
+        });
+    </script>
+</body>
+</html>
